@@ -1,0 +1,7 @@
+{
+  "name": "AutoGrade AI",
+  "description": "An intelligent grading assistant that compares handwritten student work against an answer key to provide instant feedback and scoring.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
