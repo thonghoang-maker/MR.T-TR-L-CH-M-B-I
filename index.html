@@ -1,114 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AutoGrade AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: {
-                DEFAULT: '#4F46E5', // Indigo 600
-                50: '#eef2ff',
-                100: '#e0e7ff',
-                500: '#6366f1',
-                600: '#4f46e5',
-                700: '#4338ca',
-                800: '#3730a3',
-                900: '#312e81',
-              }, 
-              secondary: '#10B981', // Emerald 500
-              accent: '#F59E0B', // Amber 500
-              surface: '#F8FAFC', // Slate 50
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            animation: {
-              'blob': 'blob 10s infinite',
-              'fade-in': 'fadeIn 0.6s ease-out',
-              'float': 'float 3s ease-in-out infinite',
-            },
-            keyframes: {
-              blob: {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' },
-              },
-              fadeIn: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              },
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-6px)' },
-              }
-            },
-          },
-        },
-      };
-    </script>
+    <title>AutoGrade AI - Chấm thi tự động</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #F8FAFC;
-        /* Modern Light Educational Gradient */
-        background-image: 
-          radial-gradient(at 0% 0%, hsla(252,100%,96%,1) 0, transparent 50%), 
-          radial-gradient(at 50% 0%, hsla(220,100%,96%,1) 0, transparent 50%), 
-          radial-gradient(at 100% 0%, hsla(340,100%,96%,1) 0, transparent 50%);
-        background-attachment: fixed;
-        color: #334155; /* Slate 700 */
-        min-height: 100vh;
-      }
-      
-      html {
-        scroll-behavior: smooth;
-      }
-
-      /* Polished Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #CBD5E1;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94A3B8;
-      }
-      
-      mjx-container {
-        display: inline-block !important;
-        margin: 0 2px !important;
-      }
-
-      /* Clean Glass Effect for Light Mode */
-      .glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-      }
-      
-      .input-field {
-        transition: all 0.2s;
-      }
-      .input-field:focus {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
-      }
-    </style>
+    
     <!-- MathJax Configuration -->
     <script>
       window.MathJax = {
@@ -117,31 +14,16 @@
           displayMath: [['$$', '$$'], ['\\[', '\\]']],
           packages: {'[+]': ['noerrors', 'noundefined']}
         },
-        svg: {
-          fontCache: 'global'
-        },
-        startup: {
-          typeset: false
-        }
+        svg: { fontCache: 'global' },
+        startup: { typeset: false }
       };
     </script>
     <script type="text/javascript" id="MathJax-script" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
     </script>
-    <script type="importmap">
-    {
-      "imports": {
-        "react/": "https://aistudiocdn.com/react@^19.2.0/",
-        "react": "https://aistudiocdn.com/react@^19.2.0",
-        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-        "recharts": "https://aistudiocdn.com/recharts@^3.5.0"
-      }
-    }
-    </script>
-</head>
+  </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
