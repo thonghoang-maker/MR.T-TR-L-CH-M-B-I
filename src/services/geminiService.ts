@@ -8,10 +8,16 @@ declare const process: {
   }
 };
 
-// Initialize Gemini Client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const MODEL_ID = "gemini-3-pro-preview";
+
+// Helper to get initialized AI client safely
+const getAiClient = () => {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        throw new Error("Chưa cấu hình API Key. Vui lòng thêm API_KEY vào Environment Variables trên Vercel.");
+    }
+    return new GoogleGenAI({ apiKey: apiKey });
+};
 
 export const gradeStudentWork = async (
   questions: QuestionConfig[], 
@@ -22,6 +28,8 @@ export const gradeStudentWork = async (
   generalAnswerKey?: UploadedFile | null
 ): Promise<GradingResult> => {
   try {
+    const ai = getAiClient(); // Lazy init here
+
     let promptText = `
       Bạn là một GIÁO VIÊN TOÁN CAO CẤP với 20 năm kinh nghiệm.
       
@@ -140,75 +148,79 @@ export const gradePracticeWork = async (
     studentWorkFiles: UploadedFile[],
     studentClassInfo?: string
 ): Promise<GradingResult> => {
-    // Re-use logic but simplify context: The "Question" is the practice problem text itself.
-    // The AI is smart enough to generate the solution internally and grade it.
-    
-    let promptText = `
-      Bạn đang chấm BÀI TẬP RÈN LUYỆN (Remedial Work) cho học sinh lớp: "${studentClassInfo || "N/A"}".
-      
-      ĐỀ BÀI (Đã giao cho học sinh):
-      ${practiceProblems.map(p => `Bài ${p.id}: ${p.content}`).join('\n')}
-      
-      NHIỆM VỤ:
-      1. Tự giải các bài toán trên để có đáp án chuẩn.
-      2. Chấm bài làm học sinh gửi lên.
-      3. Nhận xét xem học sinh đã hiểu bài chưa.
-      
-      YÊU CẦU ĐẦU RA (JSON): Giống hệt format chấm bài thi chính thức.
-    `;
-    
-     const schema = {
-      type: Type.OBJECT,
-      properties: {
-        totalScore: { type: Type.NUMBER },
-        maxTotalScore: { type: Type.NUMBER },
-        summary: { type: Type.STRING },
-        letterGrade: { type: Type.STRING },
-        studentHandwritingTranscription: { type: Type.STRING },
-        textbookKnowledge: { type: Type.STRING },
-        solutionMethod: { type: Type.STRING },
-        integrityAnalysis: {
-            type: Type.OBJECT,
-            properties: {
-                isSuspicious: { type: Type.BOOLEAN },
-                suspicionLevel: { type: Type.STRING, enum: ["LOW", "MEDIUM", "HIGH", "NONE"] },
-                reasons: { type: Type.ARRAY, items: { type: Type.STRING } }
+    try {
+        const ai = getAiClient(); // Lazy init here
+
+        let promptText = `
+        Bạn đang chấm BÀI TẬP RÈN LUYỆN (Remedial Work) cho học sinh lớp: "${studentClassInfo || "N/A"}".
+        
+        ĐỀ BÀI (Đã giao cho học sinh):
+        ${practiceProblems.map(p => `Bài ${p.id}: ${p.content}`).join('\n')}
+        
+        NHIỆM VỤ:
+        1. Tự giải các bài toán trên để có đáp án chuẩn.
+        2. Chấm bài làm học sinh gửi lên.
+        3. Nhận xét xem học sinh đã hiểu bài chưa.
+        
+        YÊU CẦU ĐẦU RA (JSON): Giống hệt format chấm bài thi chính thức.
+        `;
+        
+        const schema = {
+        type: Type.OBJECT,
+        properties: {
+            totalScore: { type: Type.NUMBER },
+            maxTotalScore: { type: Type.NUMBER },
+            summary: { type: Type.STRING },
+            letterGrade: { type: Type.STRING },
+            studentHandwritingTranscription: { type: Type.STRING },
+            textbookKnowledge: { type: Type.STRING },
+            solutionMethod: { type: Type.STRING },
+            integrityAnalysis: {
+                type: Type.OBJECT,
+                properties: {
+                    isSuspicious: { type: Type.BOOLEAN },
+                    suspicionLevel: { type: Type.STRING, enum: ["LOW", "MEDIUM", "HIGH", "NONE"] },
+                    reasons: { type: Type.ARRAY, items: { type: Type.STRING } }
+                },
+                required: ["isSuspicious", "suspicionLevel", "reasons"]
             },
-            required: ["isSuspicious", "suspicionLevel", "reasons"]
-        },
-        corrections: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              questionId: { type: Type.STRING },
-              studentAnswer: { type: Type.STRING },
-              correctAnswer: { type: Type.STRING },
-              isCorrect: { type: Type.BOOLEAN },
-              explanation: { type: Type.STRING },
-              pointsAwarded: { type: Type.NUMBER },
-              maxPoints: { type: Type.NUMBER },
+            corrections: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                questionId: { type: Type.STRING },
+                studentAnswer: { type: Type.STRING },
+                correctAnswer: { type: Type.STRING },
+                isCorrect: { type: Type.BOOLEAN },
+                explanation: { type: Type.STRING },
+                pointsAwarded: { type: Type.NUMBER },
+                maxPoints: { type: Type.NUMBER },
+                },
+                required: ["questionId", "studentAnswer", "correctAnswer", "isCorrect", "explanation", "pointsAwarded", "maxPoints"],
             },
-            required: ["questionId", "studentAnswer", "correctAnswer", "isCorrect", "explanation", "pointsAwarded", "maxPoints"],
-          },
+            },
         },
-      },
-      required: ["totalScore", "maxTotalScore", "summary", "letterGrade", "corrections", "studentHandwritingTranscription", "integrityAnalysis"],
-    };
+        required: ["totalScore", "maxTotalScore", "summary", "letterGrade", "corrections", "studentHandwritingTranscription", "integrityAnalysis"],
+        };
 
-    const parts: any[] = [{ text: promptText }];
-    parts.push({ text: `\n--- BÀI LÀM RÈN LUYỆN CỦA HỌC SINH ---` });
-    studentWorkFiles.forEach((file) => {
-      parts.push({ inlineData: { mimeType: file.file.type || "image/jpeg", data: file.base64 } });
-    });
+        const parts: any[] = [{ text: promptText }];
+        parts.push({ text: `\n--- BÀI LÀM RÈN LUYỆN CỦA HỌC SINH ---` });
+        studentWorkFiles.forEach((file) => {
+        parts.push({ inlineData: { mimeType: file.file.type || "image/jpeg", data: file.base64 } });
+        });
 
-    const response = await ai.models.generateContent({
-      model: MODEL_ID,
-      contents: { parts: parts },
-      config: { responseMimeType: "application/json", responseSchema: schema, temperature: 0.2 },
-    });
+        const response = await ai.models.generateContent({
+        model: MODEL_ID,
+        contents: { parts: parts },
+        config: { responseMimeType: "application/json", responseSchema: schema, temperature: 0.2 },
+        });
 
-    const text = response.text;
-    if (!text) throw new Error("AI Error");
-    return JSON.parse(text) as GradingResult;
+        const text = response.text;
+        if (!text) throw new Error("AI Error");
+        return JSON.parse(text) as GradingResult;
+    } catch (error) {
+        console.error("Practice grading failed", error);
+        throw error;
+    }
 }
