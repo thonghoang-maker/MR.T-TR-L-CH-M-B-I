@@ -8,7 +8,8 @@ declare const process: {
   }
 };
 
-const MODEL_ID = "gemini-3-pro-preview";
+// Use gemini-1.5-flash for better stability and speed on standard keys
+const MODEL_ID = "gemini-1.5-flash";
 
 // Helper to get initialized AI client safely
 const getAiClient = () => {
