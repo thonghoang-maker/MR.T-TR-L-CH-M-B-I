@@ -98,7 +98,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   // Helper to safely get display name even if file object is lost after reload
   const getDisplayName = () => {
     if (!file) return "";
-    return file.fileName || file.file.name || "Unknown File";
+    return file.fileName || file.file?.name || "Unknown File";
   };
 
   return (
@@ -139,7 +139,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         </div>
       ) : (
         <div className="relative h-full min-h-[120px] rounded-md border border-gray-200 bg-white p-2 group">
-            {(file.mimeType?.startsWith('image/') || file.file.type.startsWith('image/')) ? (
+            {(file.mimeType?.startsWith('image/') || file.file?.type?.startsWith('image/')) ? (
                 <img src={file.previewUrl ? file.previewUrl : `data:${file.mimeType};base64,${file.base64}`} className="w-full h-full object-contain" />
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-gray-500">
