@@ -1,6 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GradingResult, UploadedFile, QuestionConfig, PracticeProblem } from "../types";
 
+// Fix TypeScript error: Cannot find name 'process'
+declare const process: {
+  env: {
+    API_KEY: string;
+  }
+};
+
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -150,8 +157,6 @@ export const gradePracticeWork = async (
       YÊU CẦU ĐẦU RA (JSON): Giống hệt format chấm bài thi chính thức.
     `;
     
-    // Reuse the Schema from above (simplified copy for brevity in this specific function context)
-    // In a real refactor, extract schema to a constant.
      const schema = {
       type: Type.OBJECT,
       properties: {
