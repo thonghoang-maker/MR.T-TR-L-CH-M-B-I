@@ -19,28 +19,6 @@ function App() {
     }
   }, []);
 
-  const handleImportConfig = (file: UploadedFile | null) => {
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        try {
-            const json = JSON.parse(e.target?.result as string);
-            // Basic validation
-            if (json.id && json.title && Array.isArray(json.questions)) {
-                saveExamConfig(json);
-                setExamConfig(json);
-                alert(`Đã nạp đề thi: ${json.title}`);
-            } else {
-                alert("File không hợp lệ.");
-            }
-        } catch (err) {
-            alert("Lỗi đọc file cấu hình.");
-        }
-    };
-    reader.readAsText(file.file);
-  };
-
   return (
     <div className="min-h-screen font-sans pb-12 text-slate-700 selection:bg-indigo-100 selection:text-indigo-700">
       
@@ -108,20 +86,9 @@ function App() {
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Chưa có đề thi</h2>
                 <p className="text-slate-500 mb-8 max-w-md mx-auto">
-                    Giáo viên chưa cài đặt đề thi trên máy này. Nếu bạn nhận được <strong>File Đề Thi</strong> từ giáo viên, hãy tải lên bên dưới.
+                    Giáo viên chưa cài đặt đề thi trên máy này. Vui lòng liên hệ giáo viên để thiết lập.
                 </p>
                 
-                <div className="max-w-xs mx-auto mb-8 bg-white p-2 rounded-xl border border-dashed border-slate-300">
-                     <FileUploader 
-                        label=""
-                        subLabel="Tải lên file đề thi (.json)"
-                        accept=".json"
-                        file={null}
-                        onFileSelect={handleImportConfig}
-                        icon={<Upload size={20} />}
-                     />
-                </div>
-
                 <div className="flex justify-center gap-4 text-sm font-semibold">
                     <button 
                     onClick={() => setViewMode('TEACHER')}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ExamConfig, UploadedFile, StudentSubmission, QuestionConfig } from '../types';
 import { FileUploader } from './FileUploader';
 import { saveExamConfig, getSubmissions, clearSubmissions, exportSubmissionsToExcelXML, saveSubmission } from '../services/storageService';
-import { Save, FileSpreadsheet, Trash2, BookOpen, ScrollText, Layout, Settings, Plus, X, Eye, ChevronRight, ListChecks, Download, FileCheck2, ShieldCheck, ShieldAlert, Share2 } from 'lucide-react';
+import { Save, FileSpreadsheet, Trash2, BookOpen, ScrollText, Layout, Settings, Plus, X, Eye, ChevronRight, ListChecks, Download, FileCheck2, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { ResultsView } from './ResultsView';
 
 interface TeacherDashboardProps {
@@ -87,22 +87,6 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     saveExamConfig(newConfig);
     onConfigSave(newConfig);
     alert("Đã lưu cấu hình thành công!");
-  };
-
-  const handleExportConfigJSON = () => {
-    if (!currentConfig) {
-        alert("Bạn cần lưu cấu hình đề thi trước khi xuất file.");
-        return;
-    }
-    const jsonString = JSON.stringify(currentConfig);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `De_Thi_${currentConfig.title.replace(/\s+/g, '_')}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const handleExport = () => {
@@ -393,14 +377,6 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
             </div>
 
             <div className="sticky bottom-0 bg-white/90 backdrop-blur pt-4 pb-2 border-t border-slate-100 flex justify-end gap-3">
-              <button 
-                onClick={handleExportConfigJSON}
-                className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold shadow-sm hover:bg-slate-50 hover:text-indigo-600 transition-all"
-                title="Tải file đề thi để gửi cho học sinh"
-              >
-                <Share2 size={18} />
-                Xuất File Đề Thi
-              </button>
               <button 
                 onClick={handleSaveConfig}
                 className="flex items-center gap-2 px-8 py-3 bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:bg-slate-700 transition-all hover:-translate-y-0.5"
