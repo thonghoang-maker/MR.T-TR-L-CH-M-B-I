@@ -4,7 +4,7 @@ import { GradingResult, UploadedFile, QuestionConfig, PracticeProblem } from "..
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const MODEL_ID = "gemini-2.5-flash";
+const MODEL_ID = "gemini-3-pro-preview";
 
 export const gradeStudentWork = async (
   questions: QuestionConfig[], 
