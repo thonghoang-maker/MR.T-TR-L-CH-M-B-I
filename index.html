@@ -24,14 +24,13 @@
     <script type="text/javascript" id="MathJax-script" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
     </script>
-    <!-- Removed conflicting importmap script -->
 <script type="importmap">
 {
   "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
     "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
@@ -43,5 +42,9 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
+    <script>
+      // Polyfill for Vercel/Node env compatibility
+      window.process = window.process || { env: { NODE_ENV: 'production' } };
+    </script>
   </body>
 </html>

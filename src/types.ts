@@ -47,7 +47,10 @@ export interface UploadedFile {
   file: File;
   previewUrl: string;
   base64: string;
-  id?: string; 
+  id?: string;
+  // Metadata quan trọng để lưu trữ LocalStorage
+  mimeType?: string;
+  fileName?: string;
 }
 
 export interface StudentSubmission {

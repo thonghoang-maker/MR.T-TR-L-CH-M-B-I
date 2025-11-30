@@ -35,7 +35,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       onFileSelect({
         file: selectedFile,
         previewUrl: URL.createObjectURL(selectedFile),
-        base64: (reader.result as string).split(',')[1]
+        base64: (reader.result as string).split(',')[1],
+        mimeType: selectedFile.type,
+        fileName: selectedFile.name
       });
     };
     reader.readAsDataURL(selectedFile);
@@ -93,6 +95,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       } catch (e) { alert("Trình duyệt không hỗ trợ dán trực tiếp. Hãy dùng Ctrl+V."); }
   };
 
+  // Helper to safely get display name even if file object is lost after reload
+  const getDisplayName = () => {
+    if (!file) return "";
+    return file.fileName || file.file.name || "Unknown File";
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       {label && <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{label}</label>}
@@ -131,12 +139,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         </div>
       ) : (
         <div className="relative h-full min-h-[120px] rounded-md border border-gray-200 bg-white p-2 group">
-            {file.file.type.startsWith('image/') ? (
-                <img src={file.previewUrl} className="w-full h-full object-contain" />
+            {(file.mimeType?.startsWith('image/') || file.file.type.startsWith('image/')) ? (
+                <img src={file.previewUrl ? file.previewUrl : `data:${file.mimeType};base64,${file.base64}`} className="w-full h-full object-contain" />
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-gray-500">
                     <i className="fa-solid fa-file-lines text-3xl mb-2"></i>
-                    <span className="text-xs text-center line-clamp-2">{file.file.name}</span>
+                    <span className="text-xs text-center line-clamp-2">{getDisplayName()}</span>
                 </div>
             )}
             <button onClick={(e) => {e.stopPropagation(); onFileSelect(null);}} className="absolute top-1 right-1 bg-gray-800/60 text-white w-6 h-6 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
